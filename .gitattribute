@@ -1,0 +1,4 @@
+tachyonic/common/static/* linguist-vendored
+tachyonic/common/templates/* linguist-vendored
+tachyonic/common/resources/* linguist-vendored
+docs/* linguist-vendored
