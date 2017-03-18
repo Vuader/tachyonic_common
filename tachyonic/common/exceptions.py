@@ -11,21 +11,10 @@ from tachyonic.neutrino import constants as const
 log = logging.getLogger(__name__)
 
 
-class Error(exceptions.RestClientError):
+class Error(exceptions.Error):
     def __init__(self, description):
         Exception.__init__(self, description)
         self.description = description
-
-    def __str__(self):
-        return str(self.description)
-
-
-class ClientError(Error):
-    def __init__(self, title, description, status=const.HTTP_500):
-        Exception.__init__(self, description)
-        self.title = title
-        self.description = description
-        self.status = status
 
     def __str__(self):
         return str(self.description)
