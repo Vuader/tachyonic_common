@@ -13,6 +13,8 @@ class TenantBase(object):
                        lenght=60)
     external_id = Model.Text(label='External ID',
                                  length=60, readonly=True)
+    tenant_id = Model.Text(label='Parent ID',
+                           length=60, readonly=True)
     domain_id = Model.Uuid(hidden=True)
 
 
