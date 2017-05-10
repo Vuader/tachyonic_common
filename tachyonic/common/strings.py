@@ -32,6 +32,17 @@ from __future__ import unicode_literals
 
 import sys
 
+from tachyonic.common.validate import is_text
+
+
+def filter_none_text(string):
+    if string is not None:
+        if is_text(string):
+            return string
+        else:
+            return "BINARY"
+    else:
+        return ''
 
 def if_unicode_to_utf8(string):
     if sys.version_info[0] == 2:
