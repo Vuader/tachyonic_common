@@ -57,6 +57,8 @@ def is_text(s):
 
 def is_binary(s):
     if isinstance(s, unicode) or isinstance(s, str) or isinstance(s, bytes):
+        if s == '':
+            return False
         # if s contains any null, it's not text:
         if "\0" in s:
             return True
