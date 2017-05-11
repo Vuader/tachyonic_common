@@ -55,6 +55,7 @@ _const.APPLICATION_XML = 'application/xml; charset=UTF-8'
 _const.APPLICATION_JSON = 'application/json; charset=UTF-8'
 _const.APPLICATION_OCTET_STREAM = 'application/octet-stream'
 _const.APPLICATION_FORM_DATA = 'application/x-www-form-urlencoded'
+_const.APPLICATION_PDF = 'application/pdf'
 
 _const.HTTP_GET = 'GET'
 _const.HTTP_POST = 'POST'
