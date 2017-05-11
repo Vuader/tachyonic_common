@@ -134,7 +134,16 @@ class HTTPError(Error):
         self.headers = {}
 
     def __str__(self):
-        return str(self.description)
+        if self.title is not None or self.description is not None:
+            msg = ""
+            if self.title is not None:
+                msg += "%s: " % self.title
+            if self.description is not None:
+                msg += "%s" % self.description
+        else:
+            msg = self.status
+
+        return str(msg)
 
 
 class HTTPNotModified(HTTPError):
