@@ -1,6 +1,6 @@
-# Copyright (c) 2016-2017, Christiaan Frans Rademan.
+# Copyright (c) 2017, Christiaan Frans Rademan.
 # All rights reserved.
-
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
@@ -28,59 +28,58 @@
 
 from __future__ import absolute_import
 from __future__ import division
-from __future__ import print_function
 from __future__ import unicode_literals
 
-import os
-import sys
-import stat
+import datetime
 import logging
+
+import pytz
+from tzlocal import get_localzone
 
 log = logging.getLogger(__name__)
 
-def is_socket(socket):
-    try:
-        mode = os.stat(socket).st_mode
-        is_socket = stat.S_ISSOCK(mode)
-    except:
-        is_socket = False
-    return is_socket
-
-
-def is_text(s):
-    if isinstance(s, unicode) or isinstance(s, str):
-        if is_binary(s):
-            return False
-        else:
-            return True
+def utc_time(py_datetime_obj=None, source_tz=None):
+    if py_datetime_obj is None:
+        local_system_utc = datetime.datetime.utcnow()
+        return pytz.utc.localize(local_system_utc)
     else:
-        return False
+        if source_tz is None:
+            source_tz = str(get_localzone())
 
+        py_datetime_obj = pytz.timezone(source_tz).localize(py_datetime_obj)
+        utc = pytz.timezone('UTC')
+        return py_datetime_obj.astimezone(utc)
 
-def is_binary(s):
-    if isinstance(s, unicode) or isinstance(s, str) or isinstance(s, bytes):
-        try:
-            if s == '':
-                return False
-            # if s contains any null, it's not text:
-            if "\0" in s:
-                return True
-            # an "empty" string is "text" (arbitrary but reasonable choice):
-            if not s:
-                return False
-        except UnicodeDecodeError:
-            return True
+def from_utc(utc_time, destination=None):
+    if destination is None:
+        tz = get_localzone()
     else:
-        return False
+        tz = pytz.timezone(destination)
 
-def is_byte_string(string):
-    if sys.version_info[0] == 2:
-        if isinstance(string, str):
-            return True
+    return utc_time.astimezone(tz)
+
+def timezones():
+    return pytz.all_timezones
+
+class Datetime(object):
+    def __init__(self):
+        self.tz = None
+
+    def __getattr__(self, name):
+        if name == 'now':
+            return utc_time()
+        elif name == "local":
+            return from_utc(utc_time(), self.tz)
+        elif name == "timezones":
+            return timezones()
         else:
-            return False
-    else:
-        if isinstance(string, bytes):
-            return True
-        else:
-            return False
+            raise AttributeError("Unknown attribute %s" % name)
+
+    def __setattr__(self, name, value):
+        if name == 'tz':
+            if value is None:
+                super(Datetime, self).__setattr__('tz', None)
+            elif value in timezones():
+                super(Datetime, self).__setattr__('tz', value)
+            else:
+                raise AttributeError("Unknown Timezone %s" % value)

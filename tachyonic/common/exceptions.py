@@ -137,6 +137,15 @@ class HTTPError(Error):
         return str(self.description)
 
 
+class HTTPNotModified(HTTPError):
+    """
+    304 Not Modified.
+    """
+
+    def __init__(self):
+        super(HTTPNotModified, self).__init__(const.HTTP_304, None, None)
+
+
 class HTTPBadRequest(HTTPError):
     """
     400 Bad Request.
