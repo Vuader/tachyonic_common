@@ -34,7 +34,9 @@ from __future__ import unicode_literals
 import os
 import sys
 import stat
+import logging
 
+log = logging.getLogger(__name__)
 
 def is_socket(socket):
     try:
@@ -57,17 +59,19 @@ def is_text(s):
 
 def is_binary(s):
     if isinstance(s, unicode) or isinstance(s, str) or isinstance(s, bytes):
-        if s == '':
-            return False
-        # if s contains any null, it's not text:
-        if "\0" in s:
+        try:
+            if s == '':
+                return False
+            # if s contains any null, it's not text:
+            if "\0" in s:
+                return True
+            # an "empty" string is "text" (arbitrary but reasonable choice):
+            if not s:
+                return False
+        except UnicodeDecodeError:
             return True
-        # an "empty" string is "text" (arbitrary but reasonable choice):
-        if not s:
-            return False
     else:
         return False
-
 
 def is_byte_string(string):
     if sys.version_info[0] == 2:
