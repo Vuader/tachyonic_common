@@ -128,8 +128,15 @@ class ClientError(RestClientError):
 class HTTPError(Error):
     def __init__(self, status, title, description):
         Exception.__init__(self, description)
-        self.status = status
-        self.title = title
+        if status is not None:
+            self.status = status
+        else:
+            self.status = const.HTTP_500
+
+        if title is not None:
+            self.title = title
+        else:
+            self.title = status
         self.description = description
         self.headers = {}
 
