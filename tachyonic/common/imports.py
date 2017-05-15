@@ -33,6 +33,8 @@ from __future__ import unicode_literals
 import sys
 import logging
 
+from tachyonic.common import exceptions
+
 log = logging.getLogger(__name__)
 
 
@@ -42,9 +44,14 @@ def import_module(module):
 
 
 def get_class(cls):
-    cs = cls.split('.')
-    l = len(cs)
-    d = cs[l-1]
-    m = ".".join(cs[0:l-1])
-    module = import_module(m)
+    if cls is None:
+        raise ImportError("Cannot import 'None'")
+    try:
+        cs = cls.split('.')
+        l = len(cs)
+        d = cs[l-1]
+        m = ".".join(cs[0:l-1])
+        module = import_module(m)
+    except:
+        raise ImportError("Cannot import '%s'" % cls)
     return getattr(module, d)
